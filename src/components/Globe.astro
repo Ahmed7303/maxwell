@@ -1,0 +1,197 @@
+---
+---
+
+<div id="globeViz" class="w-full h-full min-h-[360px]"></div>
+
+<script>
+  async function initGlobe() {
+    const container = document.getElementById('globeViz');
+    if (!container) return;
+
+    const Globe = (await import('globe.gl')).default;
+
+    // --- Region mapping ---
+    const regionMap: Record<string, string> = {
+      'Kazakhstan': 'centralAsia',
+      'Uzbekistan': 'centralAsia',
+      'Turkmenistan': 'centralAsia',
+      'Kyrgyzstan': 'centralAsia',
+      'Tajikistan': 'centralAsia',
+      'Russia': 'easternEurope',
+      'Ukraine': 'easternEurope',
+      'Belarus': 'easternEurope',
+      'China': 'china',
+      'Mongolia': 'china',
+      'Turkey': 'middleEast',
+      'Iran': 'middleEast',
+      'Latvia': 'baltics',
+      'Lithuania': 'baltics',
+      'Estonia': 'baltics',
+    };
+
+    const regionColors: Record<string, string> = {
+      centralAsia:   'rgba(244, 162, 97, 0.4)',
+      easternEurope: 'rgba(42, 157, 143, 0.4)',
+      china:         'rgba(230, 57, 70, 0.4)',
+      middleEast:    'rgba(138, 106, 154, 0.4)',
+      baltics:       'rgba(100, 200, 255, 0.5)',
+    };
+
+    // --- Arcs data ---
+    const arcsData = [
+      // Китай → Центральная Азия (красные)
+      { startLat: 39.90, startLng: 116.41, endLat: 34.34, endLng: 108.94, color: '#e63946', label: 'Пекин → Сиань' },
+      { startLat: 34.34, startLng: 108.94, endLat: 36.06, endLng: 103.83, color: '#e63946', label: 'Сиань → Ланьчжоу' },
+      { startLat: 36.06, startLng: 103.83, endLat: 43.83, endLng: 87.62, color: '#e63946', label: 'Ланьчжоу → Урумчи' },
+      { startLat: 43.83, startLng: 87.62, endLat: 43.22, endLng: 76.85, color: '#e63946', label: 'Урумчи → Алматы' },
+      { startLat: 43.22, startLng: 76.85, endLat: 41.30, endLng: 69.24, color: '#e63946', label: 'Алматы → Ташкент' },
+      { startLat: 41.30, startLng: 69.24, endLat: 37.96, endLng: 58.33, color: '#e63946', label: 'Ташкент → Ашхабад' },
+
+      // Китай → Восточная Европа (бирюзовые)
+      { startLat: 39.90, startLng: 116.41, endLat: 51.17, endLng: 71.45, color: '#2a9d8f', label: 'Пекин → Астана' },
+      { startLat: 51.17, startLng: 71.45, endLat: 55.76, endLng: 37.62, color: '#2a9d8f', label: 'Астана → Москва' },
+      { startLat: 55.76, startLng: 37.62, endLat: 53.90, endLng: 27.56, color: '#2a9d8f', label: 'Москва → Минск' },
+      { startLat: 55.76, startLng: 37.62, endLat: 50.45, endLng: 30.52, color: '#2a9d8f', label: 'Москва → Киев' },
+
+      // Восточная Европа → Центральная Азия (оранжевые)
+      { startLat: 55.76, startLng: 37.62, endLat: 51.17, endLng: 71.45, color: '#f4a261', label: 'Москва → Астана' },
+      { startLat: 55.76, startLng: 37.62, endLat: 41.30, endLng: 69.24, color: '#f4a261', label: 'Москва → Ташкент' },
+      { startLat: 41.01, startLng: 28.98, endLat: 37.96, endLng: 58.33, color: '#f4a261', label: 'Стамбул → Ашхабад' },
+
+      // Латвия → Восточная Европа (голубые)
+      { startLat: 56.8796, startLng: 24.0524, endLat: 55.76, endLng: 37.62, color: '#64c8ff', label: 'Латвия → Москва' },
+    ];
+
+    // --- Init globe ---
+    const globe = Globe()
+      .width(container.clientWidth)
+      .height(container.clientHeight)
+      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+      .showAtmosphere(true)
+      .atmosphereColor('#1a3a6a')
+      .atmosphereAltitude(0.2)
+      .backgroundColor('#0a0e1a')
+      // Polygons
+      .polygonCapColor((feat: any) => {
+        const region = regionMap[feat.properties.ADMIN];
+        return region ? regionColors[region] : 'rgba(200, 200, 200, 0.05)';
+      })
+      .polygonSideColor(() => 'rgba(255, 255, 255, 0.05)')
+      .polygonStrokeColor(() => '#333')
+      .polygonAltitude((feat: any) => {
+        return regionMap[feat.properties.ADMIN] ? 0.012 : 0.006;
+      })
+      .polygonLabel((feat: any) => feat.properties.ADMIN)
+      // Office point
+      .pointsData([{
+        lat: 56.8796,
+        lng: 24.0524,
+        name: 'SIA "MAXWELL MANAGEMENT"',
+        address: 'MARUPES nov., Marupe, Malinu iela 13-1, LV-2167, LATVIA',
+        size: 0.12,
+        color: '#64c8ff'
+      }])
+      .pointAltitude('size')
+      .pointColor('color')
+      .pointRadius(0.4)
+      .pointLabel((d: any) => `
+        <div style="background: rgba(10,14,26,0.95); border: 1px solid rgba(100,200,255,0.4); border-radius: 10px; padding: 12px 16px; font-family: Outfit, sans-serif; color: #e8e8e8; min-width: 250px;">
+          <div style="font-size: 14px; font-weight: 600; color: #64c8ff; margin-bottom: 6px;">🏢 ${d.name}</div>
+          <div style="font-size: 12px; color: #7a8299; line-height: 1.5;">${d.address}</div>
+        </div>
+      `)
+      // Arcs
+      .arcsData(arcsData)
+      .arcColor('color')
+      .arcDashLength(0.4)
+      .arcDashGap(0.2)
+      .arcDashAnimateTime(2000)
+      .arcStroke(0.5)
+      .arcLabel('label')
+      (container);
+
+    // --- Stars via Three.js scene ---
+    const scene = globe.scene();
+    const THREE = await import('three');
+
+    const starCount = 1500;
+    const positions = new Float32Array(starCount * 3);
+    const sizes = new Float32Array(starCount);
+    const colors = new Float32Array(starCount * 3);
+
+    for (let i = 0; i < starCount; i++) {
+      // Позиции — сфера вокруг глобуса
+      const radius = 200 + Math.random() * 300;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      positions[i * 3]     = radius * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+      positions[i * 3 + 2] = radius * Math.cos(phi);
+
+      // Размеры — большинство мелкие, немного крупных
+      const rand = Math.random();
+      if (rand > 0.97) sizes[i] = 1.8 + Math.random() * 1.5;      // редкие яркие
+      else if (rand > 0.85) sizes[i] = 0.8 + Math.random() * 1.0;  // средние
+      else sizes[i] = 0.2 + Math.random() * 0.6;                    // мелкая пыль
+
+      // Цвета — не все белые, лёгкие оттенки
+      const temp = Math.random();
+      if (temp > 0.8) {
+        colors[i * 3] = 0.8; colors[i * 3 + 1] = 0.85; colors[i * 3 + 2] = 1.0;  // голубоватые
+      } else if (temp > 0.6) {
+        colors[i * 3] = 1.0; colors[i * 3 + 1] = 0.95; colors[i * 3 + 2] = 0.8;  // тёплые
+      } else {
+        colors[i * 3] = 1.0; colors[i * 3 + 1] = 1.0; colors[i * 3 + 2] = 1.0;   // белые
+      }
+    }
+
+    const starGeo = new THREE.BufferGeometry();
+    starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    starGeo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+    starGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const starMat = new THREE.PointsMaterial({
+      size: 0.8,
+      transparent: true,
+      opacity: 0.85,
+      vertexColors: true,
+      sizeAttenuation: true,
+      depthWrite: false,
+    });
+
+    scene.add(new THREE.Points(starGeo, starMat));
+
+    // Camera
+    globe.pointOfView({ lat: 45, lng: 70, altitude: 2.5 });
+
+    // Controls
+    const controls = globe.controls();
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
+
+    // Resize to fit container
+    const onResize = () => {
+      globe.width(container.clientWidth).height(container.clientHeight);
+    };
+    window.addEventListener('resize', onResize);
+
+    // Also observe container size changes
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(onResize).observe(container);
+    }
+
+    // --- Load GeoJSON from CDN ---
+    const res = await fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson');
+    const geoJson = await res.json();
+
+    const foundNames = new Set(geoJson.features.map((f: any) => f.properties.ADMIN));
+    const missing = Object.keys(regionMap).filter(n => !foundNames.has(n));
+    if (missing.length) {
+      console.warn('Countries NOT found in GeoJSON:', missing);
+    }
+
+    globe.polygonsData(geoJson.features);
+  }
+
+  initGlobe();
+</script>

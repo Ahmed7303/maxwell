@@ -1,0 +1,79 @@
+<svg width="280" height="340" viewBox="0 0 200 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="mFace" x1="40" y1="20" x2="160" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FAF7F2"/>
+      <stop offset="60%" stop-color="#E8E2DC"/>
+      <stop offset="100%" stop-color="#C8C0B8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Badge with copper border, transparent background -->
+  <rect x="8" y="8" width="184" height="180" rx="22" ry="22"
+        fill="#1B3A4B" stroke="#C17832" stroke-width="3"/>
+
+  <!-- Top-left: Atomic number -->
+  <text x="28" y="36" font-family="'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="800" fill="#E8913A" opacity="0.9">25</text>
+
+  <!-- Top-right: Group -->
+  <text x="172" y="36" font-family="'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="800" fill="#E8913A" text-anchor="end" opacity="0.9">VII</text>
+
+  <!-- M shadow for depth -->
+  <path d="M48 140V56L72 56L100 104L128 56L152 56V140"
+        stroke="#0d1f28" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.3"
+        transform="translate(2, 3)"/>
+
+  <!-- M copper glow -->
+  <path d="M48 140V56L72 56L100 104L128 56L152 56V140"
+        stroke="#C17832" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.12"/>
+
+  <!-- M main -->
+  <path d="M48 140V56L72 56L100 104L128 56L152 56V140"
+        stroke="url(#mFace)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- M highlight edge -->
+  <path d="M48 140V56L72 56L100 104"
+        stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.15"/>
+
+  <!-- Gas flare at M peak -->
+  <path d="M100 46C100 46 89 28 89 21C89 15 93.5 10 100 10C106.5 10 111 15 111 21C111 28 100 46 100 46Z"
+        fill="#E8913A"/>
+  <path d="M100 38C100 38 94 28 94 24C94 20.5 96.5 18 100 18C103.5 18 106 20.5 106 24C106 28 100 38 100 38Z"
+        fill="#C17832"/>
+  <path d="M100 31C100 31 97 26 97 23.5C97 21.5 98.3 20.2 100 20.2C101.7 20.2 103 21.5 103 23.5C103 26 100 31 100 31Z"
+        fill="#FAF7F2" opacity="0.6"/>
+
+  <!-- Molecular bonds below M legs -->
+  <line x1="48" y1="140" x2="36" y2="158" stroke="#E8913A" stroke-width="2" opacity="0.8"/>
+  <circle cx="36" cy="158" r="5" fill="none" stroke="#E8913A" stroke-width="1.5" opacity="0.8"/>
+  <circle cx="36" cy="158" r="2" fill="#E8913A" opacity="0.8"/>
+
+  <line x1="100" y1="140" x2="100" y2="162" stroke="#E8913A" stroke-width="2" opacity="0.8"/>
+  <circle cx="100" cy="162" r="5" fill="none" stroke="#E8913A" stroke-width="1.5" opacity="0.8"/>
+  <circle cx="100" cy="162" r="2" fill="#E8913A" opacity="0.8"/>
+
+  <line x1="152" y1="140" x2="164" y2="158" stroke="#E8913A" stroke-width="2" opacity="0.8"/>
+  <circle cx="164" cy="158" r="5" fill="none" stroke="#E8913A" stroke-width="1.5" opacity="0.8"/>
+  <circle cx="164" cy="158" r="2" fill="#E8913A" opacity="0.8"/>
+
+  <!-- Cross bonds -->
+  <line x1="36" y1="158" x2="100" y2="162" stroke="#E8913A" stroke-width="1" opacity="0.8"/>
+  <line x1="100" y1="162" x2="164" y2="158" stroke="#E8913A" stroke-width="1" opacity="0.8"/>
+
+  <!-- Benzene ring below badge -->
+  <path d="M100 156L118 166V186L100 196L82 186V166L100 156Z" stroke="#E8913A" stroke-width="1.2" fill="none" opacity="0.8"/>
+  <circle cx="100" cy="156" r="2.5" fill="#E8913A" opacity="0.8"/>
+  <circle cx="118" cy="166" r="2.5" fill="#E8913A" opacity="0.8"/>
+  <circle cx="82" cy="166" r="2.5" fill="#E8913A" opacity="0.8"/>
+  <circle cx="118" cy="186" r="2.5" fill="#E8913A" opacity="0.8"/>
+  <circle cx="82" cy="186" r="2.5" fill="#E8913A" opacity="0.8"/>
+  <circle cx="100" cy="196" r="2.5" fill="#E8913A" opacity="0.8"/>
+
+  <!-- Element name inside badge bottom -->
+  
+
+  <!-- MAXWELL text below -->
+  <text x="100" y="228" font-family="Georgia, 'Times New Roman', serif" font-size="35" font-weight="700" fill="#1B3A4B" text-anchor="middle" letter-spacing="3">MAXWELL</text>
+
+  <!-- MANAGEMENT text -->
+  <text x="100" y="250" font-family="'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#C17832" text-anchor="middle" letter-spacing="5">MANAGEMENT</text>
+</svg>

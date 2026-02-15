@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+:root {
+  --color-petroleum: #1b3a4b;
+  --color-amber: #e8913a;
+  --color-soft: #f5e6d3;
+  --color-copper: #c17832;
+  --color-sage: #5b7b6a;
+  --color-cream: #faf7f2;
+  --color-warm-gray: #6b6560;
+  --color-border-light: #e8e2dc;
+
+  --color-bg: var(--color-cream);
+  --color-text: var(--color-warm-gray);
+  --color-text-muted: color-mix(in srgb, var(--color-warm-gray) 76%, #000 24%);
+  --color-accent: var(--color-amber);
+  --color-hover: var(--color-copper);
+  --color-border: var(--color-border-light);
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.5;
+}
+
+.nav-link {
+  color: var(--color-accent);
+  transition: color 180ms ease;
+}
+
+.nav-link:hover,
+.nav-link:focus-visible {
+  color: var(--color-hover);
+  outline: none;
+}
+
+.dropdown-link {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 0.125rem;
+  padding: 0.5rem 0.625rem;
+  color: var(--color-text);
+  transition: color 180ms ease, background-color 180ms ease;
+}
+
+.dropdown-link:hover,
+.dropdown-link:focus-visible {
+  background-color: color-mix(in srgb, var(--color-soft) 60%, white 40%);
+  color: var(--color-hover);
+  outline: none;
+}
+
+.mobile-link {
+  display: block;
+  border-radius: 0.125rem;
+  padding: 0.5rem;
+  color: var(--color-accent);
+  transition: color 180ms ease, background-color 180ms ease;
+}
+
+.mobile-link:hover,
+.mobile-link:focus-visible {
+  background-color: color-mix(in srgb, var(--color-soft) 60%, white 40%);
+  color: var(--color-hover);
+  outline: none;
+}
+
+.mobile-sublink {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 0.125rem;
+  padding: 0.35rem 0.5rem;
+  color: var(--color-text);
+  transition: color 180ms ease;
+}
+
+.mobile-sublink:hover,
+.mobile-sublink:focus-visible {
+  color: var(--color-hover);
+  outline: none;
+}
+
+.lang-chip {
+  border: 1px solid var(--color-border);
+  border-radius: 0.125rem;
+  padding: 0.18rem 0.5rem;
+  color: var(--color-accent);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  transition: color 180ms ease, border-color 180ms ease;
+}
+
+.lang-chip:hover,
+.lang-chip:focus-visible {
+  color: var(--color-hover);
+  border-color: var(--color-hover);
+  outline: none;
+}
+
+.footer-heading {
+  margin: 0 0 0.75rem;
+  color: var(--color-petroleum);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.footer-link {
+  color: var(--color-text);
+  transition: color 180ms ease;
+}
+
+.footer-link:hover,
+.footer-link:focus-visible {
+  color: var(--color-hover);
+  outline: none;
+}

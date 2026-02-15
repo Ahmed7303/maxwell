@@ -1,0 +1,41 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="shrink-0 border-t border-[var(--color-border)] bg-[var(--color-soft)]">
+  <div class="mx-auto grid w-full max-w-7xl gap-3 px-5 py-2 md:grid-cols-3 md:px-8">
+    <section aria-labelledby="footer-email">
+      <h2 id="footer-email" class="footer-heading">Email</h2>
+      <ul class="space-y-1 text-sm">
+        <li>
+          <a href="mailto:info@mmngmt.lv" class="footer-link">info@mmngmt.lv</a>
+        </li>
+        <li>
+          <a href="mailto:support@mmngmt.lv" class="footer-link">support@mmngmt.lv</a>
+        </li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="footer-phone">
+      <h2 id="footer-phone" class="footer-heading">Phone</h2>
+      <ul class="space-y-1 text-sm">
+        <li><a href="tel:+371XXXXXXXX" class="footer-link">+371 ХХ ХХХ ХХХ</a></li>
+        <li><a href="tel:+XXXXXXXXXXXX" class="footer-link">+XXX ХХ ХХХ ХХХ</a></li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="footer-address">
+      <h2 id="footer-address" class="footer-heading">Office</h2>
+      <address class="text-sm not-italic leading-relaxed text-[var(--color-text)]">
+        MARUPES nov., Marupe, Malinu iela 13-1,<br />
+        LV-2167, LATVIA.
+      </address>
+    </section>
+  </div>
+
+  <div class="border-t border-[var(--color-border)]">
+    <div class="mx-auto w-full max-w-7xl px-5 py-1 text-xs tracking-wide text-[var(--color-text-muted)] md:px-8">
+      &copy; {year} SIA "MAXWELL MANAGEMENT". All rights reserved.
+    </div>
+  </div>
+</footer>
