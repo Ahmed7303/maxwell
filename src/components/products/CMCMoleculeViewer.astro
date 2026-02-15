@@ -1,0 +1,267 @@
+---
+---
+
+<div id="cmcMoleculeViz" class="h-full w-full min-h-[380px]"></div>
+
+<script>
+  async function initCMCMolecule() {
+    const container = document.getElementById('cmcMoleculeViz');
+    if (!container) return;
+
+    const THREE = await import('three');
+
+    /* ── Scene ── */
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      container.clientWidth / container.clientHeight,
+      0.1,
+      200,
+    );
+    camera.position.set(0, 0, 16);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x0a0e1a);
+    container.appendChild(renderer.domElement);
+
+    /* ── Lighting ── */
+    scene.add(new THREE.AmbientLight(0x404060, 0.8));
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    keyLight.position.set(5, 8, 5);
+    scene.add(keyLight);
+
+    const fillLight = new THREE.DirectionalLight(0x4488aa, 0.4);
+    fillLight.position.set(-5, -3, -5);
+    scene.add(fillLight);
+
+    const rimLight = new THREE.DirectionalLight(0x9b59b6, 0.25);
+    rimLight.position.set(0, -5, -8);
+    scene.add(rimLight);
+
+    /* ── Molecule group ── */
+    const molecule = new THREE.Group();
+
+    const C_GRAY  = 0x34495e;
+    const O_RED   = 0xe74c3c;
+    const H_WHT   = 0xecf0f1;
+    const Na_PUR  = 0x9b59b6;
+
+    // Cellulose backbone: zigzag chain of C atoms with side branches
+    // Atom data: [x, y, z, radius, color]
+    const atoms: [number, number, number, number, number][] = [
+      // ── Backbone chain (zigzag) ──
+      [-5.0,  0.0,   0.0,  0.28, C_GRAY],  // 0
+      [-3.8,  0.8,   0.4,  0.28, C_GRAY],  // 1
+      [-2.6,  0.0,  -0.2,  0.28, C_GRAY],  // 2
+      [-1.4,  0.8,   0.3,  0.28, C_GRAY],  // 3
+      [-0.2,  0.0,  -0.3,  0.28, C_GRAY],  // 4
+      [ 1.0,  0.8,   0.2,  0.28, C_GRAY],  // 5
+      [ 2.2,  0.0,  -0.4,  0.28, C_GRAY],  // 6
+      [ 3.4,  0.8,   0.1,  0.28, C_GRAY],  // 7
+      [ 4.6,  0.0,  -0.2,  0.28, C_GRAY],  // 8
+
+      // ── Ring oxygen bridges (between backbone units) ──
+      [-4.4,  0.4,   0.8,  0.22, O_RED],   // 9   O between 0-1
+      [-2.0,  0.4,   0.6,  0.22, O_RED],   // 10  O between 2-3
+      [ 0.4,  0.4,   0.5,  0.22, O_RED],   // 11  O between 4-5
+      [ 2.8,  0.4,   0.6,  0.22, O_RED],   // 12  O between 6-7
+
+      // ── Carboxymethyl side chains (OCH₂COONa) ──
+      // Branch 1 off C1
+      [-3.8, -0.8,   1.0,  0.22, O_RED],   // 13  ether O
+      [-3.8, -1.8,   1.5,  0.24, C_GRAY],  // 14  CH₂
+      [-4.6, -2.6,   2.0,  0.22, O_RED],   // 15  C=O
+      [-3.0, -2.6,   1.8,  0.22, O_RED],   // 16  O⁻
+      [-2.2, -3.2,   2.2,  0.38, Na_PUR],  // 17  Na⁺
+
+      // Branch 2 off C5
+      [ 1.0, -0.8,   0.8,  0.22, O_RED],   // 18  ether O
+      [ 1.0, -1.8,   1.3,  0.24, C_GRAY],  // 19  CH₂
+      [ 0.2, -2.6,   1.8,  0.22, O_RED],   // 20  C=O
+      [ 1.8, -2.6,   1.6,  0.22, O_RED],   // 21  O⁻
+      [ 2.6, -3.2,   2.0,  0.38, Na_PUR],  // 22  Na⁺
+
+      // ── Hydroxyl groups ──
+      [-2.6, -0.9,  -0.8,  0.22, O_RED],   // 23  OH on C2
+      [-0.2, -0.9,  -1.0,  0.22, O_RED],   // 24  OH on C4
+      [ 3.4, -0.8,  -0.6,  0.22, O_RED],   // 25  OH on C7
+      [ 4.6, -0.9,  -0.8,  0.22, O_RED],   // 26  OH on C8
+
+      // ── Hydrogens ──
+      [-5.8,  0.5,  -0.3,  0.14, H_WHT],   // 27  on C0
+      [-5.0, -0.8,  -0.5,  0.14, H_WHT],   // 28  on C0
+      [ 5.4,  0.5,   0.2,  0.14, H_WHT],   // 29  on C8
+      [-2.6, -1.6,  -1.3,  0.14, H_WHT],   // 30  on OH 23
+      [-0.2, -1.6,  -1.5,  0.14, H_WHT],   // 31  on OH 24
+      [ 3.4, -1.5,  -1.1,  0.14, H_WHT],   // 32  on OH 25
+      [ 4.6, -1.6,  -1.3,  0.14, H_WHT],   // 33  on OH 26
+    ];
+
+    const bonds: [number, number][] = [
+      // Backbone chain
+      [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8],
+      // Ring oxygens
+      [0, 9], [9, 1],
+      [2, 10], [10, 3],
+      [4, 11], [11, 5],
+      [6, 12], [12, 7],
+      // Branch 1
+      [1, 13], [13, 14], [14, 15], [14, 16], [16, 17],
+      // Branch 2
+      [5, 18], [18, 19], [19, 20], [19, 21], [21, 22],
+      // Hydroxyls
+      [2, 23], [23, 30],
+      [4, 24], [24, 31],
+      [7, 25], [25, 32],
+      [8, 26], [26, 33],
+      // Hydrogens
+      [0, 27], [0, 28], [8, 29],
+    ];
+
+    /* ── Build atoms ── */
+    for (const [x, y, z, r, color] of atoms) {
+      const isNa = color === Na_PUR;
+      const geo = new THREE.SphereGeometry(r, 32, 24);
+      const mat = new THREE.MeshStandardMaterial({
+        color,
+        metalness: isNa ? 0.5 : 0.25,
+        roughness: isNa ? 0.2 : 0.4,
+        emissive: color,
+        emissiveIntensity: isNa ? 0.2 : 0.06,
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(x, y, z);
+      molecule.add(mesh);
+    }
+
+    /* ── Build bonds ── */
+    const bondGeo = new THREE.CylinderGeometry(0.055, 0.055, 1, 8);
+    const bondMat = new THREE.MeshStandardMaterial({
+      color: 0x5a6a7a,
+      metalness: 0.15,
+      roughness: 0.6,
+      transparent: true,
+      opacity: 0.65,
+    });
+
+    for (const [ai, bi] of bonds) {
+      const a = new THREE.Vector3(atoms[ai][0], atoms[ai][1], atoms[ai][2]);
+      const b = new THREE.Vector3(atoms[bi][0], atoms[bi][1], atoms[bi][2]);
+      const mid = new THREE.Vector3().addVectors(a, b).multiplyScalar(0.5);
+      const dir = new THREE.Vector3().subVectors(b, a);
+      const len = dir.length();
+
+      const cyl = new THREE.Mesh(bondGeo, bondMat);
+      cyl.scale.set(1, len, 1);
+      cyl.position.copy(mid);
+
+      const up = new THREE.Vector3(0, 1, 0);
+      const quat = new THREE.Quaternion().setFromUnitVectors(up, dir.normalize());
+      cyl.setRotationFromQuaternion(quat);
+
+      molecule.add(cyl);
+    }
+
+    /* ── Center molecule ── */
+    const box = new THREE.Box3().setFromObject(molecule);
+    const center = box.getCenter(new THREE.Vector3());
+    molecule.position.sub(center);
+
+    scene.add(molecule);
+
+    /* ── Background particles ── */
+    const particleCount = 350;
+    const pPos = new Float32Array(particleCount * 3);
+    const pCol = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount; i++) {
+      const r = 15 + Math.random() * 45;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      pPos[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+      pPos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      pPos[i * 3 + 2] = r * Math.cos(phi);
+
+      const brightness = 0.15 + Math.random() * 0.3;
+      pCol[i * 3]     = brightness;
+      pCol[i * 3 + 1] = brightness;
+      pCol[i * 3 + 2] = brightness + Math.random() * 0.12;
+    }
+
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
+
+    const pMat = new THREE.PointsMaterial({
+      size: 0.08,
+      transparent: true,
+      opacity: 0.55,
+      vertexColors: true,
+      sizeAttenuation: true,
+      depthWrite: false,
+    });
+
+    scene.add(new THREE.Points(pGeo, pMat));
+
+    /* ── Mouse interaction ── */
+    let mouseX = 0;
+    let mouseY = 0;
+    let mouseInfluenceX = 0;
+    let mouseInfluenceY = 0;
+
+    container.addEventListener('mousemove', (e) => {
+      const rect = container.getBoundingClientRect();
+      mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+      mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    });
+
+    container.addEventListener('mouseleave', () => {
+      mouseX = 0;
+      mouseY = 0;
+    });
+
+    /* ── Animation loop ── */
+    let autoRotY = 0;
+    let autoRotX = 0;
+    let autoRotZ = 0;
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      autoRotY += 0.004;
+      autoRotX += 0.0015;
+      autoRotZ += 0.0008;
+
+      mouseInfluenceX += (mouseY * 0.4 - mouseInfluenceX) * 0.04;
+      mouseInfluenceY += (mouseX * 0.4 - mouseInfluenceY) * 0.04;
+
+      molecule.rotation.x = autoRotX + mouseInfluenceX;
+      molecule.rotation.y = autoRotY + mouseInfluenceY;
+      molecule.rotation.z = autoRotZ;
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    /* ── Resize ── */
+    const onResize = () => {
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      if (w === 0 || h === 0) return;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    };
+
+    window.addEventListener('resize', onResize);
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(onResize).observe(container);
+    }
+  }
+
+  initCMCMolecule();
+</script>

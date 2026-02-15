@@ -60,10 +60,8 @@ import headerScript from "../scripts/header.ts?url";
             data-dropdown-menu
           >
             <li>
-              <a
-                href="/industries/chemical-reagents"
-                role="menuitem"
-                class="dropdown-link inline-flex items-center gap-3 [&>img]:opacity-80 hover:[&>img]:opacity-100 focus-visible:[&>img]:opacity-100"
+              <span
+                class="dropdown-link inline-flex items-center gap-3 [&>img]:opacity-80"
               >
                 <img
                   src="/industries/chemical.svg"
@@ -75,7 +73,36 @@ import headerScript from "../scripts/header.ts?url";
                   loading="lazy"
                 />
                 <span>Chemical reagents</span>
-              </a>
+              </span>
+              <ul class="mb-1 ml-8 mt-0.5 space-y-0.5">
+                <li>
+                  <a
+                    href="/industries/chemical-reagents/fcls"
+                    role="menuitem"
+                    class="dropdown-link text-xs"
+                  >
+                    FCLS
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/industries/chemical-reagents/la-m"
+                    role="menuitem"
+                    class="dropdown-link text-xs"
+                  >
+                    LA-M
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/industries/chemical-reagents/cmc"
+                    role="menuitem"
+                    class="dropdown-link text-xs"
+                  >
+                    CMC
+                  </a>
+                </li>
+              </ul>
             </li>
             <li>
               <a
@@ -231,9 +258,8 @@ import headerScript from "../scripts/header.ts?url";
             data-mobile-industries-panel
           >
             <li>
-              <a
-                href="/industries/chemical-reagents"
-                class="mobile-sublink inline-flex min-h-10 items-center gap-3 [&>img]:opacity-80 hover:[&>img]:opacity-100 focus-visible:[&>img]:opacity-100"
+              <span
+                class="mobile-sublink inline-flex min-h-10 items-center gap-3 [&>img]:opacity-80"
               >
                 <img
                   src="/industries/chemical.svg"
@@ -245,7 +271,33 @@ import headerScript from "../scripts/header.ts?url";
                   loading="lazy"
                 />
                 <span>Chemical reagents</span>
-              </a>
+              </span>
+              <ul class="mb-1 ml-8 space-y-0.5">
+                <li>
+                  <a
+                    href="/industries/chemical-reagents/fcls"
+                    class="mobile-sublink inline-flex min-h-9 items-center text-xs"
+                  >
+                    FCLS
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/industries/chemical-reagents/la-m"
+                    class="mobile-sublink inline-flex min-h-9 items-center text-xs"
+                  >
+                    LA-M
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/industries/chemical-reagents/cmc"
+                    class="mobile-sublink inline-flex min-h-9 items-center text-xs"
+                  >
+                    CMC
+                  </a>
+                </li>
+              </ul>
             </li>
             <li>
               <a

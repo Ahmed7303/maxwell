@@ -1,0 +1,262 @@
+---
+---
+
+<div id="lamMoleculeViz" class="h-full w-full min-h-[380px]"></div>
+
+<script>
+  async function initLAMMolecule() {
+    const container = document.getElementById('lamMoleculeViz');
+    if (!container) return;
+
+    const THREE = await import('three');
+
+    /* ── Scene ── */
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      container.clientWidth / container.clientHeight,
+      0.1,
+      200,
+    );
+    camera.position.set(0, 0, 14);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x0a0e1a);
+    container.appendChild(renderer.domElement);
+
+    /* ── Lighting ── */
+    scene.add(new THREE.AmbientLight(0x404060, 0.8));
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    keyLight.position.set(5, 8, 5);
+    scene.add(keyLight);
+
+    const fillLight = new THREE.DirectionalLight(0x4488aa, 0.4);
+    fillLight.position.set(-5, -3, -5);
+    scene.add(fillLight);
+
+    const rimLight = new THREE.DirectionalLight(0x5d4037, 0.3);
+    rimLight.position.set(0, -5, -8);
+    scene.add(rimLight);
+
+    /* ── Molecule group ── */
+    const molecule = new THREE.Group();
+
+    // Colors
+    const BROWN  = 0x5d4037; // phenolic ring C
+    const C_GRAY = 0x34495e; // chain C
+    const O_RED  = 0xe74c3c; // oxygen
+    const H_WHT  = 0xecf0f1; // hydrogen
+    const N_BLUE = 0x3498db; // nitrogen
+
+    // Atom data: [x, y, z, radius, color]
+    const atoms: [number, number, number, number, number][] = [
+      // ── Phenolic ring 1 (flat in XY) ──
+      [-0.3,   0.0,   0.0,  0.28, BROWN],   // 0
+      [-0.9,   1.04,  0.0,  0.28, BROWN],   // 1
+      [-2.1,   1.04,  0.0,  0.28, BROWN],   // 2
+      [-2.7,   0.0,   0.0,  0.28, BROWN],   // 3
+      [-2.1,  -1.04,  0.0,  0.28, BROWN],   // 4
+      [-0.9,  -1.04,  0.0,  0.28, BROWN],   // 5
+
+      // ── Phenolic ring 2 (tilted, shifted) ──
+      [ 3.7,   0.5,   0.8,  0.28, BROWN],   // 6
+      [ 3.1,   1.54,  1.0,  0.28, BROWN],   // 7
+      [ 1.9,   1.54,  1.2,  0.28, BROWN],   // 8
+      [ 1.3,   0.5,   1.0,  0.28, BROWN],   // 9
+      [ 1.9,  -0.54,  0.8,  0.28, BROWN],   // 10
+      [ 3.1,  -0.54,  0.6,  0.28, BROWN],   // 11
+
+      // ── Bridge / chain carbons ──
+      [ 0.5,   0.3,   0.5,  0.26, C_GRAY],  // 12 — bridge
+      [ 5.5,   1.5,   0.2,  0.22, C_GRAY],  // 13 — methoxy CH₃
+
+      // ── Oxygens ──
+      [-3.5,   0.5,   0.3,  0.24, O_RED],   // 14 — OH on ring 1 (C3)
+      [ 0.3,  -1.5,  -0.5,  0.24, O_RED],   // 15 — bridge O
+      [ 4.5,   1.0,   0.5,  0.24, O_RED],   // 16 — OCH₃ on ring 2 (C6)
+      [-0.5,   1.8,  -0.5,  0.24, O_RED],   // 17 — OH on ring 1 (C1)
+
+      // ── Hydrogens ──
+      [-0.3,  -1.85, -0.3,  0.15, H_WHT],   // 18 — on C5
+      [-3.3,  -1.5,   0.5,  0.15, H_WHT],   // 19 — on C4
+      [ 3.7,  -1.3,   0.4,  0.15, H_WHT],   // 20 — on C11
+      [ 1.0,   2.3,   1.6,  0.15, H_WHT],   // 21 — on C8
+      [-4.2,   1.0,   0.6,  0.15, H_WHT],   // 22 — on O14 (hydroxyl H)
+      [-0.8,   2.6,  -0.9,  0.15, H_WHT],   // 23 — on O17 (hydroxyl H)
+      [ 6.2,   2.0,  -0.2,  0.15, H_WHT],   // 24 — on CH₃
+      [ 5.8,   0.7,  -0.3,  0.15, H_WHT],   // 25 — on CH₃
+
+      // ── Nitrogen (modification site) ──
+      [ 0.8,  -0.8,   1.8,  0.26, N_BLUE],  // 26
+    ];
+
+    // Bond pairs [atomA, atomB]
+    const bonds: [number, number][] = [
+      // Ring 1
+      [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0],
+      // Ring 2
+      [6, 7], [7, 8], [8, 9], [9, 10], [10, 11], [11, 6],
+      // Bridge: ring1 → C12 → ring2
+      [0, 12], [12, 9],
+      // Bridge oxygen
+      [12, 15], [15, 5],
+      // Hydroxyl on ring 1
+      [3, 14], [14, 22],
+      [1, 17], [17, 23],
+      // Methoxy on ring 2
+      [6, 16], [16, 13],
+      [13, 24], [13, 25],
+      // Hydrogens on rings
+      [5, 18], [4, 19], [11, 20], [8, 21],
+      // Nitrogen branch
+      [10, 26],
+    ];
+
+    /* ── Build atoms ── */
+    for (const [x, y, z, r, color] of atoms) {
+      const isRing = color === BROWN;
+      const isMetal = color === N_BLUE;
+      const geo = new THREE.SphereGeometry(r, 32, 24);
+      const mat = new THREE.MeshStandardMaterial({
+        color,
+        metalness: isMetal ? 0.45 : isRing ? 0.3 : 0.25,
+        roughness: isMetal ? 0.25 : isRing ? 0.3 : 0.4,
+        emissive: color,
+        emissiveIntensity: isMetal ? 0.18 : isRing ? 0.1 : 0.06,
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(x, y, z);
+      molecule.add(mesh);
+    }
+
+    /* ── Build bonds ── */
+    const bondGeo = new THREE.CylinderGeometry(0.055, 0.055, 1, 8);
+    const bondMat = new THREE.MeshStandardMaterial({
+      color: 0x5a6a7a,
+      metalness: 0.15,
+      roughness: 0.6,
+      transparent: true,
+      opacity: 0.65,
+    });
+
+    for (const [ai, bi] of bonds) {
+      const a = new THREE.Vector3(atoms[ai][0], atoms[ai][1], atoms[ai][2]);
+      const b = new THREE.Vector3(atoms[bi][0], atoms[bi][1], atoms[bi][2]);
+      const mid = new THREE.Vector3().addVectors(a, b).multiplyScalar(0.5);
+      const dir = new THREE.Vector3().subVectors(b, a);
+      const len = dir.length();
+
+      const cyl = new THREE.Mesh(bondGeo, bondMat);
+      cyl.scale.set(1, len, 1);
+      cyl.position.copy(mid);
+
+      const up = new THREE.Vector3(0, 1, 0);
+      const quat = new THREE.Quaternion().setFromUnitVectors(up, dir.normalize());
+      cyl.setRotationFromQuaternion(quat);
+
+      molecule.add(cyl);
+    }
+
+    /* ── Center molecule ── */
+    const box = new THREE.Box3().setFromObject(molecule);
+    const center = box.getCenter(new THREE.Vector3());
+    molecule.position.sub(center);
+
+    scene.add(molecule);
+
+    /* ── Background particles ── */
+    const particleCount = 350;
+    const pPos = new Float32Array(particleCount * 3);
+    const pCol = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount; i++) {
+      const r = 15 + Math.random() * 45;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      pPos[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+      pPos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      pPos[i * 3 + 2] = r * Math.cos(phi);
+
+      const brightness = 0.15 + Math.random() * 0.3;
+      pCol[i * 3]     = brightness;
+      pCol[i * 3 + 1] = brightness;
+      pCol[i * 3 + 2] = brightness + Math.random() * 0.12;
+    }
+
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
+
+    const pMat = new THREE.PointsMaterial({
+      size: 0.08,
+      transparent: true,
+      opacity: 0.55,
+      vertexColors: true,
+      sizeAttenuation: true,
+      depthWrite: false,
+    });
+
+    scene.add(new THREE.Points(pGeo, pMat));
+
+    /* ── Mouse interaction ── */
+    let mouseX = 0;
+    let mouseY = 0;
+    let mouseInfluenceX = 0;
+    let mouseInfluenceY = 0;
+
+    container.addEventListener('mousemove', (e) => {
+      const rect = container.getBoundingClientRect();
+      mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+      mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    });
+
+    container.addEventListener('mouseleave', () => {
+      mouseX = 0;
+      mouseY = 0;
+    });
+
+    /* ── Animation loop ── */
+    let autoRotY = 0;
+    let autoRotX = 0;
+    let autoRotZ = 0;
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      autoRotY += 0.004;
+      autoRotX += 0.0015;
+      autoRotZ += 0.0008;
+
+      mouseInfluenceX += (mouseY * 0.4 - mouseInfluenceX) * 0.04;
+      mouseInfluenceY += (mouseX * 0.4 - mouseInfluenceY) * 0.04;
+
+      molecule.rotation.x = autoRotX + mouseInfluenceX;
+      molecule.rotation.y = autoRotY + mouseInfluenceY;
+      molecule.rotation.z = autoRotZ;
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    /* ── Resize ── */
+    const onResize = () => {
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      if (w === 0 || h === 0) return;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    };
+
+    window.addEventListener('resize', onResize);
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(onResize).observe(container);
+    }
+  }
+
+  initLAMMolecule();
+</script>
