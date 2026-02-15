@@ -3,7 +3,7 @@ import headerScript from "../scripts/header.ts?url";
 ---
 
 <header
-  class="site-header shrink-0 border-b border-[var(--color-border)] bg-[var(--color-bg)]"
+  class="site-header sticky top-0 z-50 shrink-0 border-b border-[var(--color-border)] bg-[var(--color-bg)]"
   data-header
 >
   <div class="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-2 md:px-8">
@@ -31,7 +31,7 @@ import headerScript from "../scripts/header.ts?url";
     <nav aria-label="Primary navigation" class="hidden md:block">
       <ul class="flex items-center gap-8 text-sm font-medium tracking-wide">
         <li>
-          <a href="#" class="nav-link">Home</a>
+          <a href="/" class="nav-link">Home</a>
         </li>
 
         <li class="relative" data-dropdown>
@@ -61,7 +61,7 @@ import headerScript from "../scripts/header.ts?url";
           >
             <li>
               <a
-                href="#"
+                href="/industries/chemical-reagents"
                 role="menuitem"
                 class="dropdown-link inline-flex items-center gap-3 [&>img]:opacity-80 hover:[&>img]:opacity-100 focus-visible:[&>img]:opacity-100"
               >
@@ -198,7 +198,7 @@ import headerScript from "../scripts/header.ts?url";
   >
     <nav class="mx-auto max-w-7xl px-5 py-5" aria-label="Mobile navigation">
       <ul class="space-y-1 text-sm font-medium tracking-wide">
-        <li><a href="#" class="mobile-link">Home</a></li>
+        <li><a href="/" class="mobile-link">Home</a></li>
         <li>
           <button
             type="button"
@@ -232,7 +232,7 @@ import headerScript from "../scripts/header.ts?url";
           >
             <li>
               <a
-                href="#"
+                href="/industries/chemical-reagents"
                 class="mobile-sublink inline-flex min-h-10 items-center gap-3 [&>img]:opacity-80 hover:[&>img]:opacity-100 focus-visible:[&>img]:opacity-100"
               >
                 <img

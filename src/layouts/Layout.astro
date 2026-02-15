@@ -5,9 +5,10 @@ import "../styles/global.css";
 
 interface Props {
   title?: string;
+  scrollable?: boolean;
 }
 
-const { title = "MAXWELL MANAGEMENT" } = Astro.props;
+const { title = "MAXWELL MANAGEMENT", scrollable = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -18,9 +19,17 @@ const { title = "MAXWELL MANAGEMENT" } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
   </head>
-  <body class="flex h-screen flex-col overflow-hidden bg-[var(--color-bg)] text-[var(--color-text)] antialiased">
+  <body
+    class:list={[
+      "flex flex-col bg-[var(--color-bg)] text-[var(--color-text)] antialiased",
+      scrollable ? "min-h-screen" : "h-screen overflow-hidden",
+    ]}
+  >
     <Header />
-    <main class="mx-auto w-full max-w-7xl flex-1 px-5 md:px-8" style="min-height:0">
+    <main
+      class="mx-auto w-full max-w-7xl flex-1 px-5 md:px-8"
+      style={scrollable ? undefined : "min-height:0"}
+    >
       <slot />
     </main>
     <Footer />
