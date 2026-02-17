@@ -1,7 +1,6 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
 import LAMMoleculeViewer from "../../../components/products/LAMMoleculeViewer.astro";
-import fclsScript from "../../../scripts/fcls-page.ts?url";
 ---
 
 <Layout title="Lignin-Alkaline Reagent (LA-M) — MAXWELL MANAGEMENT" scrollable>
@@ -317,4 +316,6 @@ import fclsScript from "../../../scripts/fcls-page.ts?url";
 
 </Layout>
 
-<script type="module" src={fclsScript}></script>
+<script>
+  import "../../../scripts/fcls-page.ts";
+</script>

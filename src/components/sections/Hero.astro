@@ -1,6 +1,5 @@
 ---
 import Globe from "../Globe.astro";
-import heroScript from "../../scripts/hero.ts?url";
 ---
 
 <section
@@ -66,4 +65,6 @@ import heroScript from "../../scripts/hero.ts?url";
   </div>
 </section>
 
-<script type="module" src={heroScript}></script>
+<script>
+  import "../../scripts/hero.ts";
+</script>

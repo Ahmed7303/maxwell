@@ -1,7 +1,6 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
 import CMCMoleculeViewer from "../../../components/products/CMCMoleculeViewer.astro";
-import fclsScript from "../../../scripts/fcls-page.ts?url";
 ---
 
 <Layout title="Carboxymethyl Cellulose (CMC) — MAXWELL MANAGEMENT" scrollable>
@@ -318,4 +317,6 @@ import fclsScript from "../../../scripts/fcls-page.ts?url";
 
 </Layout>
 
-<script type="module" src={fclsScript}></script>
+<script>
+  import "../../../scripts/fcls-page.ts";
+</script>
