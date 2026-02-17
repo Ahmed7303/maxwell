@@ -5,10 +5,9 @@ import "../styles/global.css";
 
 interface Props {
   title?: string;
-  scrollable?: boolean;
 }
 
-const { title = "MAXWELL MANAGEMENT", scrollable = false } = Astro.props;
+const { title = "MAXWELL MANAGEMENT" } = Astro.props;
 ---
 
 <!doctype html>
@@ -20,15 +19,11 @@ const { title = "MAXWELL MANAGEMENT", scrollable = false } = Astro.props;
     <title>{title}</title>
   </head>
   <body
-    class:list={[
-      "flex flex-col bg-[var(--color-bg)] text-[var(--color-text)] antialiased",
-      scrollable ? "min-h-screen" : "h-screen overflow-hidden",
-    ]}
+    class="flex min-h-screen flex-col bg-[var(--color-bg)] text-[var(--color-text)] antialiased"
   >
     <Header />
     <main
       class="mx-auto w-full max-w-7xl flex-1 px-5 md:px-8"
-      style={scrollable ? undefined : "min-height:0"}
     >
       <slot />
     </main>

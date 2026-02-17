@@ -1,33 +1,20 @@
 import { gsap } from "gsap";
 
-let initialized = false;
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-export function initHero(): void {
-  if (initialized) return;
-
-  const hero = document.querySelector<HTMLElement>("[data-hero]");
-  if (!hero) return;
-  initialized = true;
-
-  const revealItems = hero.querySelectorAll<HTMLElement>("[data-hero-reveal]");
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  if (reduceMotion) {
-    gsap.set(revealItems, { autoAlpha: 1, y: 0 });
-    return;
-  }
-
-  const tl = gsap.timeline({ defaults: { ease: "power1.out" } });
-
-  tl.fromTo(
-    revealItems,
-    { autoAlpha: 0, y: 10 },
-    { autoAlpha: 1, y: 0, duration: 0.22, stagger: 0.07 }
-  );
-}
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => initHero(), { once: true });
+if (reducedMotion) {
+  document.querySelectorAll("[data-hero-reveal]").forEach((el) => {
+    const h = el as HTMLElement;
+    h.style.opacity = "1";
+    h.style.transform = "none";
+  });
 } else {
-  initHero();
+  gsap.to("[data-hero] [data-hero-reveal]", {
+    opacity: 1,
+    y: 0,
+    duration: 0.55,
+    stagger: 0.1,
+    ease: "power2.out",
+    delay: 0.15,
+  });
 }
